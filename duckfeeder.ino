@@ -1,4 +1,4 @@
-#define DOORCLOSED 7 // angle when closed
+#define DOORCLOSED 9 // angle when closed
 #define DOOROPEN 180 // angle when open
 #define DOORPIN 10 // pin for servo
 
