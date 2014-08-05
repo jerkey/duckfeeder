@@ -1,6 +1,7 @@
 #define DOORCLOSED 9 // angle when closed
-#define DOOROPEN 180 // angle when open
+#define DOOROPEN 131 // angle when open
 #define DOORPIN 10 // pin for servo
+#define SERVODISABLE 13 // when HIGH servo is disabled
 
 #define SPK_L1 4 // speaker terminals, left and right
 #define SPK_L2 5
@@ -17,6 +18,8 @@ byte position,lastPosition = DOOROPEN;
 
 void setup() {
   pinMode(DOORPIN,OUTPUT);
+  pinMode(SERVODISABLE,OUTPUT);
+  digitalWrite(SERVODISABLE,HIGH);
   doorServo.attach(DOORPIN);
   Serial.begin(9600);
   Serial.println("hello i'm a duck food bin");
@@ -67,14 +70,9 @@ void loop()
   }
 }
 
-void stepper(boolean dir, unsigned int distance, int speed) {
-  for(int i=0; i <distance ;  i++){
-    delayMicroseconds(500);
-    delayMicroseconds(speed);
-  }
-}
-
 void door(int angle) {
+  doorServo.write(angle);
+  digitalWrite(SERVODISABLE,LOW);
   int step = 1; // must be 1 for "i != angle" to work
   if (angle < lastPosition) step *= -1; // count the right direction
   for(int i=lastPosition; i != angle;  i += step){
@@ -82,6 +80,8 @@ void door(int angle) {
     delay(doorSpeed);
   }
   doorServo.write(angle);
+  delay(1000); // wait for servo to arrive before disabling it
+  digitalWrite(SERVODISABLE,HIGH);
   lastPosition = angle;
 }
 
